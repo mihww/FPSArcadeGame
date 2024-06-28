@@ -6,7 +6,6 @@ public class Bottle : MonoBehaviour
 {
     [SerializeField] GameObject brokenBottlePrefab;
  
-    
     public void Explode()
     {
         GameObject brokenBottle = Instantiate(brokenBottlePrefab, this.transform.position, Quaternion.identity);

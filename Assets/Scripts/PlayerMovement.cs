@@ -6,24 +6,29 @@ public class PlayerMovement : MonoBehaviour
 {
     private CharacterController controller;
 
+    #region Physics Variables
     public float speed = 12f;
     public float gravity = -9.81f * 2;
     public float jumpHeight = 3f;
+    #endregion
 
+    #region Ground Variables
     public Transform groundCheck;
     public float groundDistance = 0.4f;
     public LayerMask groundMask;
+    #endregion
 
     private Vector3 velocity;
 
-    private Rigidbody rb;
-
-    private bool canMove = true;
-    private bool isGrounded;
-    private bool isMoving;
+    private Rigidbody rb; 
 
     private Vector3 lastPosition = new Vector3(0f, 0f, 0f);
 
+    #region Bools
+    private bool canMove = true;
+    private bool isGrounded;
+    private bool isMoving;
+    #endregion
 
     void Start()
     {
