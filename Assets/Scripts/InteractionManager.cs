@@ -7,6 +7,7 @@ public class InteractionManager : MonoBehaviour // Singleton
     public static InteractionManager Instance { get; private set; }
 
     public Weapon hoveredWeapon = null;
+    public AmmoBox hoveredAmmoBox = null;
 
     void Awake()
     {
@@ -24,46 +25,74 @@ public class InteractionManager : MonoBehaviour // Singleton
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        float maxInteractionDistance = 5f;
+
+        if (Physics.Raycast(ray, out hit, maxInteractionDistance))
         {
             GameObject objectHitByRaycast = hit.transform.gameObject;
 
-            if (objectHitByRaycast.GetComponent<Weapon>() && objectHitByRaycast.GetComponent<Weapon>().isActiveWeapon==false)
-            {
-                hoveredWeapon = objectHitByRaycast.GetComponent<Weapon>();
-                Highlight(hoveredWeapon);
-
-                if (Input.GetKeyDown(KeyCode.F))
-                {
-                    WeaponManager.Instance.PickupWeapon(objectHitByRaycast.gameObject);
-                    Unhighlight(hoveredWeapon);
-                    //AmmoManager.Instance.UpdateAmmoDisplay();
-                }
-            }
-            else
-            {
-                if (hoveredWeapon)
-                {
-                    Unhighlight(hoveredWeapon);
-                }
-            }
+            HandleWeaponInteraction(objectHitByRaycast);
+            HandleAmmoInteraction(objectHitByRaycast);
         }
-
-
     }
 
     /* --------------------------------------------------------------------------------------------------- */
 
     #region Handling Highlighting for code readability
-    private void Highlight(Weapon obj)
+    private void Highlight<T>(T obj) where T : Component
     {
         obj.GetComponent<Outline>().enabled = true;
     }
-    private void Unhighlight(Weapon obj)
+    private void Unhighlight<T>(T obj) where T : Component
     {
         obj.GetComponent<Outline>().enabled = false;
     }
     #endregion
 
+    #region Handling Interactions
+    private void HandleWeaponInteraction(GameObject objectHitByRaycast)
+    {
+        if (objectHitByRaycast.GetComponent<Weapon>() && objectHitByRaycast.GetComponent<Weapon>().isActiveWeapon == false)
+        {
+            hoveredWeapon = objectHitByRaycast.GetComponent<Weapon>();
+            Highlight(hoveredWeapon);
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                WeaponManager.Instance.PickupWeapon(objectHitByRaycast.gameObject);
+                Unhighlight(hoveredWeapon);
+            }
+        }
+        else
+        {
+            if (hoveredWeapon)
+            {
+                Unhighlight(hoveredWeapon);
+            }
+        }
+    }
+
+    private void HandleAmmoInteraction(GameObject objectHitByRaycast)
+    {
+        if (objectHitByRaycast.GetComponent<AmmoBox>())
+        {
+            hoveredAmmoBox = objectHitByRaycast.GetComponent<AmmoBox>();
+            Highlight(hoveredAmmoBox);
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                WeaponManager.Instance.PickupAmmo(hoveredAmmoBox);
+                Destroy(objectHitByRaycast.gameObject);
+            }
+        }
+        else
+        {
+            if (hoveredAmmoBox)
+            {
+                Unhighlight(hoveredAmmoBox);
+            }
+        }
+    }
+    #endregion
 }
 

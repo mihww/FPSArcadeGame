@@ -65,8 +65,8 @@ public class Weapon : MonoBehaviour
     #region Reloading Variables
     [Header("---------- Reload details ----------")]
     public float reloadTime;
-    public uint magazineSize;
-    public uint bulletsLeft;
+    public int magazineSize;
+    public int bulletsLeft;
     public bool isReloading;
     #endregion
 
@@ -91,41 +91,42 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
-        if(isActiveWeapon)
+        if (isActiveWeapon)
         {
-            GetComponent<Outline>().enabled = false;    
-          
-        if (bulletsLeft == 0 && isShooting)
-        {
-            // This will stay hardcoded since all weapons have the same empty magazine sound
-            SoundManager.Instance.emptyMagazine.Play();
-        }
+            GetComponent<Outline>().enabled = false;
 
-        #region Handling Keys
-        if (currentShootingMode == EShootingMode.Auto)
-        {
-            // Holding down Mouse0
-            isShooting = Input.GetKey(KeyCode.Mouse0) && !isReloading;
-        }
-        else if (currentShootingMode == EShootingMode.Single ||
-                currentShootingMode == EShootingMode.Burst)
-        {
-            // Clicking Mouse0 Once
-            isShooting = Input.GetKeyDown(KeyCode.Mouse0) && !isReloading;
-        }
+            if (bulletsLeft == 0 && isShooting)
+            {
+                // This will stay hardcoded since all weapons have the same empty magazine sound
+                SoundManager.Instance.emptyMagazine.Play();
+            }
 
-        if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize && isReloading == false)
-        {
+            #region Handling Keys
+            if (currentShootingMode == EShootingMode.Auto)
+            {
+                // Holding down Mouse0
+                isShooting = Input.GetKey(KeyCode.Mouse0) && !isReloading;
+            }
+            else if (currentShootingMode == EShootingMode.Single ||
+                    currentShootingMode == EShootingMode.Burst)
+            {
+                // Clicking Mouse0 Once
+                isShooting = Input.GetKeyDown(KeyCode.Mouse0) && !isReloading;
+            }
 
-            Reload();
+            if (Input.GetKeyDown(KeyCode.R) && bulletsLeft < magazineSize &&
+                isReloading == false && WeaponManager.Instance.CheckAmmoLeftFor(weaponModel) > 0)
+            {
 
-        }
+                Reload();
 
-        // Auto reload when magazine is empty
-        if (readyToShoot && isShooting == false && isReloading == false && bulletsLeft <= 0)
-        {
-            Reload();
-        }
+            }
+
+            // Auto reload when magazine is empty
+            if (readyToShoot && isShooting == false && isReloading == false && bulletsLeft <= 0)
+            {
+                Reload();
+            }
         }
         #endregion
 
@@ -140,6 +141,8 @@ public class Weapon : MonoBehaviour
 
     }
 
+
+
     private void Reload()
     {
         SoundManager.Instance.PlayReloadingSound(weaponModel);
@@ -152,9 +155,22 @@ public class Weapon : MonoBehaviour
 
     private void ReloadCompleted()
     {
-        bulletsLeft = magazineSize;
+        int ammoNeeded = magazineSize - bulletsLeft;
+        int ammoAvailable = WeaponManager.Instance.CheckAmmoLeftFor(weaponModel);
+
+        if (ammoAvailable >= ammoNeeded)
+        {
+            bulletsLeft = magazineSize;
+            WeaponManager.Instance.DecreaseTotalAmmo(ammoNeeded, weaponModel);
+        }
+        else
+        {
+            
+            bulletsLeft += ammoAvailable;
+            WeaponManager.Instance.DecreaseTotalAmmo(ammoAvailable, weaponModel);
+        }
         isReloading = false;
-        
+
     }
 
     private void FireWeapon()

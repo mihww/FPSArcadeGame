@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using static Weapon;
 
 public class WeaponManager : MonoBehaviour
 {
@@ -12,9 +13,19 @@ public class WeaponManager : MonoBehaviour
 
     public GameObject activeWeaponSlot;
 
+    [Header("----- Ammo -----")]
+    public int totalPistolAmmo = 0;
+    public int totalRifleAmmo = 0;
+
+    //public int maxPistolAmmoInAMag = 7;
+    //public int maxRifleAmmoInAMag = 30;
+
+
     public event Action<GameObject> OnWeaponChanged; // event to notify the weapon change - couldn't find a better way to constantly update the ammo display
 
 
+
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -26,13 +37,11 @@ public class WeaponManager : MonoBehaviour
             Instance = this;
         }
     }
-
     private void Start()
     {
         activeWeaponSlot = weaponSlots[0];
         InvokeWeaponChanged(activeWeaponSlot.transform.GetChild(0).gameObject);
     }
-
     private void Update()
     {
         foreach (GameObject weaponSlot in weaponSlots)
@@ -58,11 +67,27 @@ public class WeaponManager : MonoBehaviour
         }
     }
 
+
+    #region Handling Pickups
     public void PickupWeapon(GameObject pickedUpWeapon)
     {
         AddWeaponIntoActiveSlot(pickedUpWeapon);
         InvokeWeaponChanged(pickedUpWeapon);
     }
+    internal void PickupAmmo(AmmoBox ammo)
+    {
+        switch(ammo.ammoType)
+        {
+            case AmmoBox.EAmmoType.PistolAmmo:
+                totalPistolAmmo += ammo.ammoAmount;
+                break;
+            case AmmoBox.EAmmoType.RifleAmmo:
+                totalRifleAmmo += ammo.ammoAmount;
+                break;
+        }
+    }
+    #endregion
+
 
     private void DropCurrentWeapon(GameObject pickedUpWeapon)
     {
@@ -79,7 +104,6 @@ public class WeaponManager : MonoBehaviour
             
         }
     }
-
     public void SwitchActiveSlot(int slotNumber)
     {
         // check if the slot number is within the range of the weapon slots
@@ -111,14 +135,16 @@ public class WeaponManager : MonoBehaviour
 
     }
 
+
+
+
     /* --------------------------------------------------------------------------------------------------- */
 
+    #region Handling methods
     private void InvokeWeaponChanged(GameObject weapon)
     {
         OnWeaponChanged?.Invoke(weapon);
     }
-
-    #region Scene handling methods
     private void AddWeaponIntoActiveSlot(GameObject pickedUpWeapon)
     {
         DropCurrentWeapon(pickedUpWeapon);
@@ -132,6 +158,30 @@ public class WeaponManager : MonoBehaviour
         pickedUpWeapon.transform.localRotation = Quaternion.Euler(weapon.spawnRotation.x, weapon.spawnRotation.y, weapon.spawnRotation.z);
         weapon.isActiveWeapon = true;
         weapon.animator.enabled = true;
+    }
+    internal void DecreaseTotalAmmo(int bulletsLeft, Weapon.EWeaponModel weaponModel)
+    {
+        switch (weaponModel)
+        {
+            case Weapon.EWeaponModel.Pistol1911:
+                totalPistolAmmo -= bulletsLeft;
+                break;
+            case Weapon.EWeaponModel.M16:
+                totalRifleAmmo -= bulletsLeft;
+                break;
+        }
+    }
+    public int CheckAmmoLeftFor(EWeaponModel weaponModel)
+    {
+        switch (weaponModel)
+        {
+            case EWeaponModel.Pistol1911:
+                return WeaponManager.Instance.totalPistolAmmo;
+            case EWeaponModel.M16:
+                return WeaponManager.Instance.totalRifleAmmo;
+            default:
+                return 0;
+        }
     }
     #endregion
 

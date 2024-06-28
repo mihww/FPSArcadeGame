@@ -7,24 +7,20 @@ public class SoundManager : MonoBehaviour // Singleton
 {
     public static SoundManager Instance { get; set; }
 
-    #region Channels
+
     [Header("---------- Channels ----------")]
     public AudioSource shootingChannel;
     public AudioSource reloadingChannel;
     public AudioSource emptyMagazine;
-    #endregion
 
-    #region Pistol M1911
     [Header("---------- Pistol M1911 ----------")]
     public AudioClip M1911Shot;
     public AudioClip M1911Reload;
-    #endregion
-
-    #region M16 Rifle
+    
     [Header("---------- M16 ----------")]
     public AudioClip M16Shot;
     public AudioClip M16Reload;
-    #endregion
+
 
     private void Awake()
     {

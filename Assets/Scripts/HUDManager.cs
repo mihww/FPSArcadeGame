@@ -48,7 +48,7 @@ using static Weapon;
         if (activeWeapon)
         {
             magazineAmmoUI.text = $"{activeWeapon.bulletsLeft / activeWeapon.bulletsPerBurst}";
-            totalAmmoUI.text = $"{activeWeapon.magazineSize / activeWeapon.bulletsPerBurst}";
+            totalAmmoUI.text = WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.weaponModel).ToString();    
 
             Weapon.EWeaponModel model = activeWeapon.weaponModel;
 
