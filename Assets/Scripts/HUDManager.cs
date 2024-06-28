@@ -28,6 +28,8 @@ using static Weapon;
 
         public Sprite emptySlot;
 
+        public GameObject crosshair;
+
         private void Awake()
         {
             if (Instance != null && Instance != this)

@@ -52,13 +52,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponModel: 0
   isActiveWeapon: 0
-  isShooting: 0
   readyToShoot: 0
   shootingDelay: 0.3
   currentShootingMode: 0
   bulletsPerBurst: 1
   burstBulletsLeft: 0
-  spreadIntensity: 0.05
+  spreadIntensity: 0
+  hipSpreadIntensity: 0.4
+  adsSpreadIntensity: 0.04
   bulletPrefab: {fileID: 6134362299130652123, guid: b1b3982b054994347b8116f1522e8c02,
     type: 3}
   bulletSpawn: {fileID: 2471132559018933588}
@@ -71,6 +72,7 @@ MonoBehaviour:
   isReloading: 0
   spawnPosition: {x: 0.1506134, y: 2.24, z: 0.6590119}
   spawnRotation: {x: 0, y: -180, z: 0}
+  isADS: 0
 --- !u!95 &4051339875163384374
 Animator:
   serializedVersion: 5

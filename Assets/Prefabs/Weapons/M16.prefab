@@ -5178,7 +5178,7 @@ Transform:
   m_GameObject: {fileID: 5819972585758408324}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5842437, y: -0.57416517, z: -0.40619504, w: -0.40496835}
-  m_LocalPosition: {x: 15.267, y: 5.086, z: 3.86}
+  m_LocalPosition: {x: 15.267, y: 4.88, z: 3.86}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5275,13 +5275,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponModel: 1
   isActiveWeapon: 0
-  isShooting: 0
   readyToShoot: 0
   shootingDelay: 0.15
   currentShootingMode: 2
   bulletsPerBurst: 1
   burstBulletsLeft: 0
-  spreadIntensity: 0.2
+  spreadIntensity: 0
+  hipSpreadIntensity: 0.5
+  adsSpreadIntensity: 0.02
   bulletPrefab: {fileID: 6134362299130652123, guid: b1b3982b054994347b8116f1522e8c02,
     type: 3}
   bulletSpawn: {fileID: 9033815640927089775}
@@ -5294,6 +5295,7 @@ MonoBehaviour:
   isReloading: 0
   spawnPosition: {x: 0.15, y: 2.23, z: 0.7}
   spawnRotation: {x: 0, y: -180, z: 0}
+  isADS: 0
 --- !u!114 &2966840708023198645
 MonoBehaviour:
   m_ObjectHideFlags: 0

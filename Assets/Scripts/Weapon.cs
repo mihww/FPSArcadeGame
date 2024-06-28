@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 using TMPro;
 using Unity.IO.LowLevel.Unsafe;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 
 public class Weapon : MonoBehaviour
 {
@@ -40,12 +42,16 @@ public class Weapon : MonoBehaviour
     #endregion
 
     #region Burst Variables
+    [Header("---------- Burst details ----------")]
     public uint bulletsPerBurst = 3;
     public uint burstBulletsLeft;
     #endregion
 
     #region Spread Variable
+    [Header("---------- Spread details ----------")]
     public float spreadIntensity;
+    public float hipSpreadIntensity;
+    public float adsSpreadIntensity;
     #endregion
 
     #region Bullet variables
@@ -77,6 +83,8 @@ public class Weapon : MonoBehaviour
 
     #endregion
 
+    public bool isADS;
+
     #endregion
 
     private void Awake()
@@ -86,6 +94,8 @@ public class Weapon : MonoBehaviour
         animator = GetComponent<Animator>();
         bulletsLeft = magazineSize;
 
+        spreadIntensity = hipSpreadIntensity;
+
     }
 
 
@@ -93,6 +103,15 @@ public class Weapon : MonoBehaviour
     {
         if (isActiveWeapon)
         {
+            if (Input.GetMouseButtonDown(1))
+            {
+                EnterADS();
+            }
+            if (Input.GetMouseButtonUp(1))
+            {
+                ExitADS();
+            }
+
             GetComponent<Outline>().enabled = false;
 
             if (bulletsLeft == 0 && isShooting)
@@ -142,19 +161,47 @@ public class Weapon : MonoBehaviour
     }
 
 
+    private void EnterADS()
+    {
+        Debug.Log("Right mouse button clicked.");
+        animator.SetTrigger("enterADS");
+        isADS = true;
+        HUDManager.Instance.crosshair.SetActive(false);
+        spreadIntensity = adsSpreadIntensity;
+    }
+    private void ExitADS()
+    {
+        Debug.Log("Right mouse button Released.");
+        animator.SetTrigger("exitADS");
+        HUDManager.Instance.crosshair.SetActive(true);
+        isADS = false;
+        spreadIntensity = hipSpreadIntensity;
+    }
+
 
     private void Reload()
     {
-        SoundManager.Instance.PlayReloadingSound(weaponModel);
+        int ammoAvailable = WeaponManager.Instance.CheckAmmoLeftFor(weaponModel);
 
-        animator.SetTrigger("RELOAD");
+        if (ammoAvailable > 0)
+        {
+            SoundManager.Instance.PlayReloadingSound(weaponModel);
 
-        isReloading = true;
-        Invoke(nameof(ReloadCompleted), reloadTime);
+            animator.SetTrigger("RELOAD");
+
+            isReloading = true;
+            Invoke(nameof(ReloadCompleted), reloadTime);
+        }
+        else
+        {
+            CancelInvoke(nameof(ReloadCompleted));
+            Debug.Log("No ammo left to reload.");
+        }
     }
 
     private void ReloadCompleted()
     {
+
         int ammoNeeded = magazineSize - bulletsLeft;
         int ammoAvailable = WeaponManager.Instance.CheckAmmoLeftFor(weaponModel);
 
@@ -165,7 +212,7 @@ public class Weapon : MonoBehaviour
         }
         else
         {
-            
+
             bulletsLeft += ammoAvailable;
             WeaponManager.Instance.DecreaseTotalAmmo(ammoAvailable, weaponModel);
         }
@@ -180,7 +227,17 @@ public class Weapon : MonoBehaviour
             bulletsLeft--;
 
             muzzleEffect.GetComponent<ParticleSystem>().Play();
-            animator.SetTrigger("RECOIL");
+
+            if (isADS)
+            {
+                animator.SetTrigger("RECOIL_ADS");
+
+            }
+            else
+            {
+                animator.SetTrigger("RECOIL");
+
+            }
 
             SoundManager.Instance.PlayShootingSound(weaponModel);
 
@@ -263,4 +320,5 @@ public class Weapon : MonoBehaviour
         yield return new WaitForSeconds(lifetime);
         Destroy(bullet);
     }
+
 }
