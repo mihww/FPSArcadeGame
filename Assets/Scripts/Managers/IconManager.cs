@@ -10,8 +10,11 @@ public class IconManager : MonoBehaviour
     public static Sprite Pistol_Ammo;
     public static Sprite Rifle_Ammo;
 
-    [Header("Throwables Icons")]
+    [Header("Lethal Icons")]
     public static Sprite Grenade;
+
+    [Header("Tactical Icons")]
+    public static Sprite Smoke_Grenade;
 
 
     public static IconManager Instance { get; set; }
@@ -34,5 +37,6 @@ public class IconManager : MonoBehaviour
         Rifle_Ammo = Resources.Load<GameObject>("Rifle_Ammo").GetComponent<SpriteRenderer>().sprite;
 
         Grenade = Resources.Load<GameObject>("Grenade").GetComponent<SpriteRenderer>().sprite;
+        Smoke_Grenade = Resources.Load<GameObject>("Smoke_Grenade").GetComponent<SpriteRenderer>().sprite;
     }
 }

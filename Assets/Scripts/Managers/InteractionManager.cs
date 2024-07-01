@@ -40,7 +40,7 @@ public class InteractionManager : MonoBehaviour // Singleton
 
     /* --------------------------------------------------------------------------------------------------- */
 
-    #region Handling Highlighting for code readability
+    #region Handling Highlighting
     private void Highlight<T>(T obj) where T : Component
     {
         obj.GetComponent<Outline>().enabled = true;
@@ -96,7 +96,6 @@ public class InteractionManager : MonoBehaviour // Singleton
         }
     }
 
-
     private void HandleThrowableInteraction(GameObject objectHitByRaycast)
     {
         if (objectHitByRaycast.GetComponent<Throwable>())
@@ -107,7 +106,6 @@ public class InteractionManager : MonoBehaviour // Singleton
             if (Input.GetKeyDown(KeyCode.F))
             {
                 WeaponManager.Instance.PickupThrowable(hoveredThrowable);
-                Destroy(objectHitByRaycast.gameObject);
             }
         }
         else

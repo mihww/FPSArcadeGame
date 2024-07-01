@@ -131,7 +131,7 @@ MonoBehaviour:
   damageRadius: 20
   explosionForce: 1200
   hasBeenThrown: 0
-  throwableType: 0
+  throwableType: 1
 --- !u!114 &3265476602636151034
 MonoBehaviour:
   m_ObjectHideFlags: 0

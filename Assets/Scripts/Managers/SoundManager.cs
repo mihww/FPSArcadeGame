@@ -11,7 +11,8 @@ public class SoundManager : MonoBehaviour // Singleton
     [Header("---------- Channels ----------")]
     public AudioSource shootingChannel;
     public AudioSource reloadingChannel;
-    public AudioSource emptyMagazine;
+    public AudioSource emptyMagazineChannel;
+    public AudioSource throwablesChannel;
 
     [Header("---------- Pistol M1911 ----------")]
     public AudioClip M1911Shot;
@@ -21,7 +22,10 @@ public class SoundManager : MonoBehaviour // Singleton
     public AudioClip M16Shot;
     public AudioClip M16Reload;
 
+    [Header("---------- Throwables ----------")]
+    public AudioClip grenadeSound;
 
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)

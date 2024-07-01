@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class Throwable : MonoBehaviour
 {
-    [SerializeField] float delay = 3f;
-    [SerializeField] float damageRadius = 50f;
-    [SerializeField] float explosionForce = 1200f;
+    [SerializeField] private float delay = 3f;
+    [SerializeField] private float damageRadius = 50f;
+    [SerializeField] private float explosionForce = 1200f;
+
 
     private float countdown;
     private bool hasExploded = false;
@@ -15,7 +16,9 @@ public class Throwable : MonoBehaviour
 
     public enum EThrowableType
     {
-        Grenade
+        None,
+        Grenade,
+        Smoke_Grenade,
     }
     public EThrowableType throwableType;
 
@@ -44,6 +47,9 @@ public class Throwable : MonoBehaviour
         Destroy(gameObject);
     }
 
+/* ---------------------------------------------------------------------------------------------------- */
+
+    #region Effects
     private void GetThrowableEffect()
     {
         switch (throwableType)
@@ -51,11 +57,43 @@ public class Throwable : MonoBehaviour
             case EThrowableType.Grenade:
                 GrenadeEffect();
                 break;
+            case EThrowableType.Smoke_Grenade:
+                SmokeGrenadeEFfect();
+                break;
+        }
+    }
+
+    private void SmokeGrenadeEFfect()
+    {
+        // Audio Effect
+        SoundManager.Instance.throwablesChannel.PlayOneShot(SoundManager.Instance.grenadeSound);
+
+        // Visual effect
+        GameObject smokeEffect = GlobalReferences.Instance.smokeGrenadeEffectPrefab;
+        Instantiate(smokeEffect, transform.position, transform.rotation);
+
+        // Physical effect
+        Collider[] colliders = Physics.OverlapSphere(transform.position, damageRadius);
+        foreach (Collider nearbyObject in colliders)
+        {
+            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                // smoke
+            }
+
+
+
+            // will add enemies here
         }
     }
 
     private void GrenadeEffect()
     {
+
+        // Audio Effect
+        SoundManager.Instance.throwablesChannel.PlayOneShot(SoundManager.Instance.grenadeSound);
+
         // Visual effect
         GameObject explosionEffect = GlobalReferences.Instance.grenadeExplosionEffectPrefab;
         Instantiate(explosionEffect, transform.position, transform.rotation);
@@ -70,9 +108,12 @@ public class Throwable : MonoBehaviour
                 rb.AddExplosionForce(explosionForce, transform.position, damageRadius);
             }
 
+
+
             // will add enemies here
-
-
         }
     }
+    #endregion
+
 }
+

@@ -116,7 +116,7 @@ public class Weapon : MonoBehaviour
             if (bulletsLeft == 0 && isShooting)
             {
                 // This will stay hardcoded since all weapons have the same empty magazine sound
-                SoundManager.Instance.emptyMagazine.Play();
+                SoundManager.Instance.emptyMagazineChannel.Play();
             }
 
             HandleInput();
@@ -276,7 +276,7 @@ public class Weapon : MonoBehaviour
         Destroy(bullet);
     }
 
-    // ------------------------------------------------------------------------------------------------
+    /* ------------------------------------------------------------------------------------------------ */
 
     #region || ----- ADS Related ----- ||
     private void EnterADS()

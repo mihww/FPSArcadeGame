@@ -17,19 +17,32 @@ public class WeaponManager : MonoBehaviour
     public int totalPistolAmmo = 0;
     public int totalRifleAmmo = 0;
 
-    [Header("----- Throwables -----")]
-    public int grenades = 0;
+    [Header("----- Throwables General -----")]
     public float throwForce = 10f;
-    public GameObject grenadePrefab;
     public GameObject throwableSpawn;
     public float forceMultiplier = 0f;
     public float forceMultiplierLimit = 2f;
+
+    [Header("----- Lethals -----")]
+    public int maxLethals = 2;
+    public int lethalsCount = 0;
+    public Throwable.EThrowableType equippedLethalType;
+    public GameObject grenadePrefab;
+
+
+    [Header("----- Tacticals -----")]
+    public int maxTacticals = 2;
+    public int tacticalsCount = 0;
+    public Throwable.EThrowableType equippedTacticalType;
+    public GameObject smokeGrenadePrefab;
+
+
 
     public event Action<GameObject> OnWeaponChanged; // event to notify the weapon change - couldn't find a better way to constantly update the ammo display
 
 
 
-    
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -45,6 +58,9 @@ public class WeaponManager : MonoBehaviour
     {
         activeWeaponSlot = weaponSlots[0];
         InvokeWeaponChanged(activeWeaponSlot.transform.GetChild(0).gameObject);
+
+        equippedLethalType = Throwable.EThrowableType.None;
+        equippedTacticalType = Throwable.EThrowableType.None;
     }
     private void Update()
     {
@@ -60,7 +76,7 @@ public class WeaponManager : MonoBehaviour
             }
         }
 
-        switch(true)
+        switch (true)
         {
             // Weapon Slots
             case bool _ when (Input.GetKeyDown(KeyCode.Alpha1) && Weapon.isShooting == false):
@@ -69,10 +85,10 @@ public class WeaponManager : MonoBehaviour
             case bool _ when (Input.GetKeyDown(KeyCode.Alpha2) && Weapon.isShooting == false):
                 SwitchActiveSlot(1);
                 break;
-            
+
             // Lethals
             case bool _ when Input.GetKeyUp(KeyCode.G):
-                if (grenades > 0)
+                if (lethalsCount > 0)
                 {
                     ThrowLethal();
                 }
@@ -80,41 +96,40 @@ public class WeaponManager : MonoBehaviour
                 forceMultiplier = 0;
                 break;
 
-
             /* rest of lethals */
+
+            // Tacticals
+            case bool _ when Input.GetKeyUp(KeyCode.T):
+                if (tacticalsCount > 0)
+                {
+                    ThrowTactical();
+                }
+
+                forceMultiplier = 0;
+                break;
+
+
 
 
 
             // Others
-            case bool _ when Input.GetKey(KeyCode.G):
+            case bool _ when (Input.GetKey(KeyCode.G) || Input.GetKey(KeyCode.T)):
+
                 forceMultiplier += Time.deltaTime;
-                if(forceMultiplier > forceMultiplierLimit)
+
+                if (forceMultiplier > forceMultiplierLimit)
                 {
                     forceMultiplier = forceMultiplierLimit;
                 }
                 break;
-                
+
 
         }
     }
 
 
 
-    private void DropCurrentWeapon(GameObject pickedUpWeapon)
-    {
-     if(activeWeaponSlot.transform.childCount > 0)
-        {
-            var weaponToDrop = activeWeaponSlot.transform.GetChild(0).gameObject;
-            
-            weaponToDrop.GetComponent<Weapon>().isActiveWeapon = false;
-            weaponToDrop.GetComponent<Weapon>().animator.enabled = false;
-
-            weaponToDrop.transform.SetParent(pickedUpWeapon.transform.parent);
-            weaponToDrop.transform.localPosition = pickedUpWeapon.transform.localPosition;
-            weaponToDrop.transform.localRotation = pickedUpWeapon.transform.localRotation;
-            
-        }
-    }
+    
     public void SwitchActiveSlot(int slotNumber)
     {
         // check if the slot number is within the range of the weapon slots
@@ -125,7 +140,7 @@ public class WeaponManager : MonoBehaviour
         }
 
         // Deactivate the current weapon
-        if (activeWeaponSlot.transform.childCount>0)
+        if (activeWeaponSlot.transform.childCount > 0)
         {
             Weapon currentWeapon = activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>();
             currentWeapon.isActiveWeapon = false;
@@ -134,7 +149,7 @@ public class WeaponManager : MonoBehaviour
         // Activate the new weapon
         activeWeaponSlot = weaponSlots[slotNumber];
 
-        if(activeWeaponSlot.transform.childCount > 0)
+        if (activeWeaponSlot.transform.childCount > 0)
         {
             Weapon newWeapon = activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>();
             if (newWeapon != null)
@@ -152,11 +167,13 @@ public class WeaponManager : MonoBehaviour
     #region || ----- Handling Pickups ----- ||
 
     #region [Weapon]
+
     public void PickupWeapon(GameObject pickedUpWeapon)
     {
         AddWeaponIntoActiveSlot(pickedUpWeapon);
         InvokeWeaponChanged(pickedUpWeapon);
     }
+
     #endregion
     #region [Ammo]
     internal void PickupAmmo(AmmoBox ammo)
@@ -178,17 +195,63 @@ public class WeaponManager : MonoBehaviour
         switch (throwable.throwableType)
         {
             case Throwable.EThrowableType.Grenade:
-                PickupGrenade();
+                PickupThrowableAsLethal(Throwable.EThrowableType.Grenade);
+                break;
+            case Throwable.EThrowableType.Smoke_Grenade:
+                PickupThrowableAsTactical(Throwable.EThrowableType.Smoke_Grenade);
                 break;
         }
 
     }
 
-    private void PickupGrenade()
+    private void PickupThrowableAsTactical(Throwable.EThrowableType tactical)
     {
-        grenades += 1;
-        HUDManager.Instance.UpdateThrowables(Throwable.EThrowableType.Grenade);
+        if (equippedTacticalType == tactical || equippedTacticalType == Throwable.EThrowableType.None)
+        {
+            equippedTacticalType = tactical;
+
+            if (tacticalsCount < maxTacticals)
+            {
+                tacticalsCount += 1;
+                Destroy(InteractionManager.Instance.hoveredThrowable.gameObject);
+                HUDManager.Instance.UpdateThrowablesUI(equippedTacticalType);
+            }
+            else
+            {
+                print("tacticals limit reached");
+            }
+        }
+        else
+        {
+            // Cannot pick up tacticals
+            // Switch tacticals
+        }
     }
+
+    private void PickupThrowableAsLethal(Throwable.EThrowableType lethal)
+    {
+        if (equippedLethalType == lethal || equippedLethalType == Throwable.EThrowableType.None)
+        {
+            equippedLethalType = lethal;
+
+            if (lethalsCount < maxLethals)
+            {
+                lethalsCount += 1;
+                Destroy(InteractionManager.Instance.hoveredThrowable.gameObject);
+                HUDManager.Instance.UpdateThrowablesUI(equippedLethalType);
+            }
+            else
+            {
+                print("lethals limit reached");
+            }
+        }
+        else
+        {
+            // Cannot pick up lethal
+            // Switch lethal
+        }
+    }
+
     #endregion
 
     #endregion
@@ -236,12 +299,66 @@ public class WeaponManager : MonoBehaviour
                 return 0;
         }
     }
+    private void DropCurrentWeapon(GameObject pickedUpWeapon)
+    {
+        if (activeWeaponSlot.transform.childCount > 0)
+        {
+            var weaponToDrop = activeWeaponSlot.transform.GetChild(0).gameObject;
+
+            weaponToDrop.GetComponent<Weapon>().isActiveWeapon = false;
+            weaponToDrop.GetComponent<Weapon>().animator.enabled = false;
+
+            // Settnig original scale
+            var originalScale = weaponToDrop.transform.localScale;
+
+            weaponToDrop.transform.SetParent(pickedUpWeapon.transform.parent);
+            weaponToDrop.transform.localPosition = pickedUpWeapon.transform.localPosition;
+            weaponToDrop.transform.localRotation = pickedUpWeapon.transform.localRotation;
+            
+            // Storing to the scale - it should fix the scale issue due to the parent change
+            weaponToDrop.transform.localScale = originalScale;
+        }
+    }
+
     #endregion
 
     #region || ----- Handling Throwables methods ----- ||
+
+    private GameObject GetThrowablePrefab(Throwable.EThrowableType throwableType)
+    {
+        switch (throwableType)
+        {
+            case Throwable.EThrowableType.Grenade:
+                return grenadePrefab;
+            case Throwable.EThrowableType.Smoke_Grenade:
+                return smokeGrenadePrefab;
+        }
+
+        return null; // since it will never run
+    }
+    private void ThrowTactical()
+    {
+        GameObject tacticalPrefab = GetThrowablePrefab(equippedTacticalType);
+
+        GameObject throwable = Instantiate(tacticalPrefab, throwableSpawn.transform.position, Camera.main.transform.rotation);
+        Rigidbody rb = throwable.GetComponent<Rigidbody>();
+
+        rb.AddForce(Camera.main.transform.forward * (throwForce * forceMultiplier), ForceMode.Impulse);
+
+        throwable.GetComponent<Throwable>().hasBeenThrown = true;
+
+        tacticalsCount--;
+
+        if (tacticalsCount <= 0)
+        {
+            equippedTacticalType = Throwable.EThrowableType.None;
+        }
+
+        HUDManager.Instance.UpdateThrowablesUI(equippedTacticalType);
+    }
     private void ThrowLethal()
     {
-        GameObject lethalPrefab = grenadePrefab;
+        GameObject lethalPrefab = GetThrowablePrefab(equippedLethalType);
 
         GameObject throwable = Instantiate(lethalPrefab, throwableSpawn.transform.position, Camera.main.transform.rotation);
         Rigidbody rb = throwable.GetComponent<Rigidbody>();
@@ -250,11 +367,17 @@ public class WeaponManager : MonoBehaviour
 
         throwable.GetComponent<Throwable>().hasBeenThrown = true;
 
-        grenades--;
-        HUDManager.Instance.UpdateThrowables(Throwable.EThrowableType.Grenade);
+        lethalsCount--;
 
+        if (lethalsCount <= 0)
+        {
+            equippedLethalType = Throwable.EThrowableType.None;
+        }
 
+        HUDManager.Instance.UpdateThrowablesUI(equippedLethalType);
     }
+
+
     #endregion
 
 }
