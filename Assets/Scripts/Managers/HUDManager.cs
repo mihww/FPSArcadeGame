@@ -45,41 +45,23 @@ public class HUDManager : MonoBehaviour // Singleton
 
     private void Update()
     {
-        Weapon activeWeapon = WeaponManager.Instance.activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>();
-        Weapon inactiveWeapon = GetInactiveWeaponSlot().GetComponentInChildren<Weapon>();
+        Weapon activeWeapon = GetActiveWeapon();
+        Weapon inactiveWeapon = GetInactiveWeapon();
 
-        if (activeWeapon)
+        if (activeWeapon == null)
         {
-            magazineAmmoUI.text = $"{activeWeapon.bulletsLeft / activeWeapon.bulletsPerBurst}";
-            totalAmmoUI.text = WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.weaponModel).ToString();
-
-            Weapon.EWeaponModel model = activeWeapon.weaponModel;
-
-            ammoTypeUI.sprite = GetAmmoSprite(model);
-            activeWeaponUI.sprite = GetWeaponSprite(model);
-
-            if (inactiveWeapon)
-            {
-                inactiveWeaponUI.sprite = GetWeaponSprite(inactiveWeapon.weaponModel);
-            }
-        }
-        else
-        {
-            magazineAmmoUI.text = "";
-            totalAmmoUI.text = "";
-
-            ammoTypeUI.sprite = emptySlot;
-
-            activeWeaponUI.sprite = emptySlot;
-            inactiveWeaponUI.sprite = emptySlot;
-
+            ClearWeaponUI();
         }
 
+        UpdateWeaponUI(activeWeapon, inactiveWeapon);
 
-        if (WeaponManager.Instance.lethalsCount <= 0)         lethalUI.sprite = greySlot;
-        if (WeaponManager.Instance.tacticalsCount <= 0)       tacticalUI.sprite = greySlot;
+        if (WeaponManager.Instance.lethalsCount <= 0)        lethalUI.sprite = greySlot;
+        if (WeaponManager.Instance.tacticalsCount <= 0)      tacticalUI.sprite = greySlot;
+
+        inactiveWeaponUI.sprite = GetWeaponSprite(inactiveWeapon.weaponModel);
 
     }
+
 
     public void UpdateThrowablesUI(Throwable.EThrowableType throwableType)
     {
@@ -98,79 +80,97 @@ public class HUDManager : MonoBehaviour // Singleton
         }
     }
 
-/* ------------------------------------------------------------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------------------------------------------------------------ */
 
     #region Getters
-private Sprite GetWeaponSprite(EWeaponModel model)
-{
-    switch (model)
+    private Sprite GetWeaponSprite(EWeaponModel model)
     {
-        case EWeaponModel.Pistol1911:
-            return IconManager.Pistol1911_Weapon;
-        case EWeaponModel.M16:
-            return IconManager.M16_Weapon;
-        default:
-            return null;
-    }
-}
-
-private Sprite GetAmmoSprite(EWeaponModel model)
-{
-    switch (model)
-    {
-        case EWeaponModel.Pistol1911:
-            return IconManager.Pistol_Ammo;
-        case EWeaponModel.M16:
-            return IconManager.Rifle_Ammo;
-        default:
-            return null;
-
-    }
-}
-
-private GameObject GetInactiveWeaponSlot()
-{
-    foreach (GameObject weaponSlot in WeaponManager.Instance.weaponSlots)
-    {
-        if (weaponSlot != WeaponManager.Instance.activeWeaponSlot)
+        switch (model)
         {
-            return weaponSlot;
+            case EWeaponModel.Pistol1911:
+                return IconManager.Pistol1911_Weapon;
+            case EWeaponModel.M16:
+                return IconManager.M16_Weapon;
+            default:
+                return null;
         }
     }
 
-    return null; // will not happen
-}
+    private Sprite GetAmmoSprite(EWeaponModel model)
+    {
+        switch (model)
+        {
+            case EWeaponModel.Pistol1911:
+                return IconManager.Pistol_Ammo;
+            case EWeaponModel.M16:
+                return IconManager.Rifle_Ammo;
+            default:
+                return null;
+
+        }
+    }
+
+    private GameObject GetInactiveWeaponSlot()
+    {
+        foreach (GameObject weaponSlot in WeaponManager.Instance.weaponSlots)
+        {
+            if (weaponSlot != WeaponManager.Instance.activeWeaponSlot)
+            {
+                return weaponSlot;
+            }
+        }
+
+        return null; // will not happen
+    }
+
+
+    private Weapon GetActiveWeapon()
+    {
+        return WeaponManager.Instance.activeWeaponSlot.transform.childCount > 0
+               ? WeaponManager.Instance.activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>()
+               : null;
+    }
+    private Weapon GetInactiveWeapon()
+    {
+        return GetInactiveWeaponSlot()?.GetComponentInChildren<Weapon>();
+    }
+
+
+
     #endregion
 
-    private void SetWeaponUI()
+    #region UI manipulation methods
+    private void ClearWeaponUI()
     {
-        Weapon activeWeapon = WeaponManager.Instance.activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>();
-        Weapon inactiveWeapon = GetInactiveWeaponSlot().GetComponentInChildren<Weapon>();
-        if (activeWeapon)
+        magazineAmmoUI.text = "";
+        totalAmmoUI.text = "";
+
+        ammoTypeUI.sprite = emptySlot;
+        activeWeaponUI.sprite = emptySlot;
+        inactiveWeaponUI.sprite = emptySlot;
+    }
+
+    private void UpdateWeaponUI(Weapon activeWeapon, Weapon inactiveWeapon)
+    {
+        magazineAmmoUI.text = $"{activeWeapon.bulletsLeft / activeWeapon.bulletsPerBurst}";
+        totalAmmoUI.text = WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.weaponModel).ToString();
+
+        Weapon.EWeaponModel model = activeWeapon.weaponModel;
+
+        ammoTypeUI.sprite = GetAmmoSprite(model);
+        activeWeaponUI.sprite = GetWeaponSprite(model);
+
+        if (inactiveWeapon == null)
         {
-            magazineAmmoUI.text = $"{activeWeapon.bulletsLeft / activeWeapon.bulletsPerBurst}";
-            totalAmmoUI.text = WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.weaponModel).ToString();
-
-            Weapon.EWeaponModel model = activeWeapon.weaponModel;
-
-            ammoTypeUI.sprite = GetAmmoSprite(model);
-            activeWeaponUI.sprite = GetWeaponSprite(model);
-
-            if (inactiveWeapon)
-            {
-                inactiveWeaponUI.sprite = GetWeaponSprite(inactiveWeapon.weaponModel);
-            }
+            inactiveWeaponUI.sprite = emptySlot;
         }
         else
         {
-            magazineAmmoUI.text = "";
-            totalAmmoUI.text = "";
-
-            ammoTypeUI.sprite = emptySlot;
-
-            activeWeaponUI.sprite = emptySlot;
-            inactiveWeaponUI.sprite = emptySlot;
+            inactiveWeaponUI.sprite = GetWeaponSprite(inactiveWeapon.weaponModel);
         }
     }
+
+
+    #endregion
 
 }
