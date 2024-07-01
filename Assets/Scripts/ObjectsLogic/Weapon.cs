@@ -102,6 +102,8 @@ public class Weapon : MonoBehaviour
     {
         if (isActiveWeapon)
         {
+
+            SetWeaponLayer("WeaponRender");
             if (Input.GetMouseButtonDown(1))
             {
                 EnterADS();
@@ -121,19 +123,24 @@ public class Weapon : MonoBehaviour
 
             HandleInput();
 
-        }
-        
 
-        if (readyToShoot && isShooting && bulletsLeft > 0)
+
+
+            if (readyToShoot && isShooting && bulletsLeft > 0)
+            {
+                burstBulletsLeft = bulletsPerBurst;
+                FireWeapon();
+                Debug.Log("Attempting to fire bullet.");
+            }
+        }
+        else
         {
-            burstBulletsLeft = bulletsPerBurst;
-            FireWeapon();
-            Debug.Log("Attempting to fire bullet.");
+            SetWeaponLayer("Default");
         }
-
-
 
     }
+
+
     private void Reload()
     {
         int ammoAvailable = WeaponManager.Instance.CheckAmmoLeftFor(weaponModel);
@@ -322,6 +329,14 @@ public class Weapon : MonoBehaviour
         if (readyToShoot && !isShooting && !isReloading && bulletsLeft <= 0)
         {
             Reload();
+        }
+    }
+    private void SetWeaponLayer(string layerName)
+    {
+        int layer = LayerMask.NameToLayer(layerName);
+        foreach (Transform child in transform)
+        {
+            child.gameObject.layer = layer;
         }
     }
 
