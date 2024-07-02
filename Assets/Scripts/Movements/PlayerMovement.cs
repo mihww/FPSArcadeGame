@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
 
     #region Physics Variables
-    public float speed = 12f;
+    public float speed = 20f;
     public float gravity = -9.81f * 2;
     public float jumpHeight = 3f;
     #endregion
@@ -20,7 +20,7 @@ public class PlayerMovement : MonoBehaviour
 
     private Vector3 velocity;
 
-    private Rigidbody rb; 
+    private Rigidbody rb;
 
     private Vector3 lastPosition = new Vector3(0f, 0f, 0f);
 
@@ -58,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
         // Move the player
         controller.Move(move * speed * Time.deltaTime);
 
-        if(Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
             // Actually jumping
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
@@ -71,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
         // Excecuting the jump
         controller.Move(velocity * Time.deltaTime);
 
-        if(lastPosition != gameObject.transform.position && isGrounded)
+        if (lastPosition != gameObject.transform.position && isGrounded)
         {
             isMoving = true;
             // will use later

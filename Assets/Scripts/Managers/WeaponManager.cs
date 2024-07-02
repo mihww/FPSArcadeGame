@@ -57,7 +57,8 @@ public class WeaponManager : MonoBehaviour
     private void Start()
     {
         activeWeaponSlot = weaponSlots[0];
-        InvokeWeaponChanged(activeWeaponSlot.transform.GetChild(0).gameObject);
+
+        if (activeWeaponSlot.transform.childCount > 0)         InvokeWeaponChanged(activeWeaponSlot.transform.GetChild(0).gameObject);
 
         equippedLethalType = Throwable.EThrowableType.None;
         equippedTacticalType = Throwable.EThrowableType.None;

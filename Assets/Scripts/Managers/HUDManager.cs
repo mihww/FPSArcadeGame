@@ -55,19 +55,28 @@ public class HUDManager : MonoBehaviour // Singleton
 
         UpdateWeaponUI(activeWeapon, inactiveWeapon);
 
-        if (WeaponManager.Instance.lethalsCount <= 0)        lethalUI.sprite = greySlot;
-        if (WeaponManager.Instance.tacticalsCount <= 0)      tacticalUI.sprite = greySlot;
+        if (WeaponManager.Instance.lethalsCount <= 0) lethalUI.sprite = greySlot;
+        if (WeaponManager.Instance.tacticalsCount <= 0) tacticalUI.sprite = greySlot;
 
-        inactiveWeaponUI.sprite = GetWeaponSprite(inactiveWeapon.weaponModel);
+        if (inactiveWeapon != null)
+        {
+            inactiveWeaponUI.sprite = GetWeaponSprite(inactiveWeapon.weaponModel);
+        }
+        else
+        {
+            inactiveWeaponUI.sprite = emptySlot;
+        }
 
     }
 
 
     public void UpdateThrowablesUI(Throwable.EThrowableType throwableType)
     {
-        lethalAmountUI.text = WeaponManager.Instance.lethalsCount.ToString();
-        tacticalAmountUI.text = WeaponManager.Instance.tacticalsCount.ToString();
-
+        if (WeaponManager.Instance != null)
+        {
+            lethalAmountUI.text = WeaponManager.Instance.lethalsCount.ToString();
+            tacticalAmountUI.text = WeaponManager.Instance.tacticalsCount.ToString();
+        }
         switch (throwableType)
         {
             case Throwable.EThrowableType.Grenade:
@@ -112,6 +121,10 @@ public class HUDManager : MonoBehaviour // Singleton
 
     private GameObject GetInactiveWeaponSlot()
     {
+        if (WeaponManager.Instance == null || WeaponManager.Instance.weaponSlots == null || WeaponManager.Instance.weaponSlots.Count == 0)
+        {
+            return null;
+        }
         foreach (GameObject weaponSlot in WeaponManager.Instance.weaponSlots)
         {
             if (weaponSlot != WeaponManager.Instance.activeWeaponSlot)
@@ -126,13 +139,16 @@ public class HUDManager : MonoBehaviour // Singleton
 
     private Weapon GetActiveWeapon()
     {
+        if (WeaponManager.Instance == null || WeaponManager.Instance.activeWeaponSlot == null) return null;
+
         return WeaponManager.Instance.activeWeaponSlot.transform.childCount > 0
                ? WeaponManager.Instance.activeWeaponSlot.transform.GetChild(0).GetComponent<Weapon>()
                : null;
     }
     private Weapon GetInactiveWeapon()
     {
-        return GetInactiveWeaponSlot()?.GetComponentInChildren<Weapon>();
+        GameObject inactiveWeaponSlot = GetInactiveWeaponSlot();
+        return inactiveWeaponSlot?.GetComponentInChildren<Weapon>();
     }
 
 
@@ -152,21 +168,28 @@ public class HUDManager : MonoBehaviour // Singleton
 
     private void UpdateWeaponUI(Weapon activeWeapon, Weapon inactiveWeapon)
     {
-        magazineAmmoUI.text = $"{activeWeapon.bulletsLeft / activeWeapon.bulletsPerBurst}";
-        totalAmmoUI.text = WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.weaponModel).ToString();
-
-        Weapon.EWeaponModel model = activeWeapon.weaponModel;
-
-        ammoTypeUI.sprite = GetAmmoSprite(model);
-        activeWeaponUI.sprite = GetWeaponSprite(model);
-
-        if (inactiveWeapon == null)
+        if (activeWeapon != null)
         {
-            inactiveWeaponUI.sprite = emptySlot;
+            magazineAmmoUI.text = activeWeapon.bulletsPerBurst > 0 ? $"{activeWeapon.bulletsLeft / activeWeapon.bulletsPerBurst}" : "0";
+            totalAmmoUI.text = WeaponManager.Instance != null ? WeaponManager.Instance.CheckAmmoLeftFor(activeWeapon.weaponModel).ToString() : "0";
+
+            Weapon.EWeaponModel model = activeWeapon.weaponModel;
+
+            ammoTypeUI.sprite = GetAmmoSprite(model);
+            activeWeaponUI.sprite = GetWeaponSprite(model);
         }
         else
         {
+            ClearWeaponUI();
+        }
+
+        if (inactiveWeapon != null)
+        {
             inactiveWeaponUI.sprite = GetWeaponSprite(inactiveWeapon.weaponModel);
+        }
+        else
+        {
+            inactiveWeaponUI.sprite = emptySlot;
         }
     }
 
