@@ -100,17 +100,18 @@ public class Throwable : MonoBehaviour
 
         // Physical effect
         Collider[] colliders = Physics.OverlapSphere(transform.position, damageRadius);
-        foreach (Collider nearbyObject in colliders)
+        foreach (Collider objectInRange in colliders)
         {
-            Rigidbody rb = nearbyObject.GetComponent<Rigidbody>();
+            Rigidbody rb = objectInRange.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.AddExplosionForce(explosionForce, transform.position, damageRadius);
             }
 
-
-
-            // will add enemies here
+            if(objectInRange.GetComponent<Enemy>())
+            {
+                objectInRange.GetComponent<Enemy>().TakeDamage(100);
+            }
         }
     }
     #endregion

@@ -27,9 +27,9 @@ public class Bullet : MonoBehaviour
                 CreateBulletImpactEffect(collision);
                 collision.gameObject.GetComponent<Bottle>().Explode();
                 break;
-            case bool _ when collision.gameObject.CompareTag("Zombie"):
-                print("Hit a Zombie");
-                collision.gameObject.GetComponent<Zombie>().TakeDamage(bulletDamage);
+            case bool _ when collision.gameObject.CompareTag("Enemy"):
+                print("Hit an Enemy");
+                collision.gameObject.GetComponent<Enemy>().TakeDamage(bulletDamage);
                 Destroy(gameObject);
                 break;
         }
