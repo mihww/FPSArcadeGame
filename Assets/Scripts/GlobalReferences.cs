@@ -12,6 +12,8 @@ public class GlobalReferences : MonoBehaviour // Singleton
     public GameObject grenadeExplosionEffectPrefab;
     public GameObject smokeGrenadeEffectPrefab;
 
+    public GameObject bloodSprayEffectPrefab;
+
     private void Awake()
     {
         if(Instance!=null && Instance != this)

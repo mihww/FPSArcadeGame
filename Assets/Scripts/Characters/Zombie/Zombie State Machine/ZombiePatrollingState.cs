@@ -28,11 +28,11 @@ public class ZombiePatrollingState : StateMachineBehaviour
 
         /* --- Get all waypoints and move to them --- */
         GameObject waypointCluster = GameObject.FindGameObjectWithTag("Waypoints");
-        foreach(Transform t in waypointCluster.transform)
+        foreach (Transform t in waypointCluster.transform)
         {
             waypointsList.Add(t);
         }
-        
+
         Vector3 nextPos = waypointsList[Random.Range(0, waypointsList.Count)].position;
         agent.SetDestination(nextPos);
 
@@ -40,15 +40,22 @@ public class ZombiePatrollingState : StateMachineBehaviour
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (SoundManager.Instance.zombiesChannel.isPlaying == false)
+        {
+            SoundManager.Instance.zombiesChannel.clip = SoundManager.Instance.zombieWalking;
+            SoundManager.Instance.zombiesChannel.PlayDelayed(0.5f);
+        }
+
+
         /* --- If agent arrived at waypoint, set new destination --- */
-        if(agent.remainingDistance <= agent.stoppingDistance)
+        if (agent.remainingDistance <= agent.stoppingDistance)
         {
             agent.SetDestination(waypointsList[Random.Range(0, waypointsList.Count)].position);
         }
 
         /* --- Transition to Idle State --- */
         timer += Time.deltaTime;
-        if(timer > patrollingTime)
+        if (timer > patrollingTime)
         {
             animator.SetBool("isPatrolling", false);
         }
@@ -66,5 +73,7 @@ public class ZombiePatrollingState : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         agent.SetDestination(animator.transform.position); // stop
+        SoundManager.Instance.zombiesChannel.Stop();
+
     }
 }

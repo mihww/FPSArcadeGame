@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,8 @@ public class SoundManager : MonoBehaviour // Singleton
     public AudioSource reloadingChannel;
     public AudioSource emptyMagazineChannel;
     public AudioSource throwablesChannel;
+    public AudioSource zombiesChannel;
+    public AudioSource zombiesChannel2;
 
     [Header("---------- Pistol M1911 ----------")]
     public AudioClip M1911Shot;
@@ -25,7 +28,13 @@ public class SoundManager : MonoBehaviour // Singleton
     [Header("---------- Throwables ----------")]
     public AudioClip grenadeSound;
 
-    
+    [Header("---------- Zombies ----------")]
+    public AudioClip zombieWalking;
+    public AudioClip zombieChase;
+    public AudioClip zombieAttack;
+    public AudioClip zombieHurt; 
+    public AudioClip zombieDeath;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

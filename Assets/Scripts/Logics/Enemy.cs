@@ -38,11 +38,18 @@ public class Enemy : MonoBehaviour
                     break;
 
             }
+            // Dead Sound
+            SoundManager.Instance.zombiesChannel.PlayOneShot(SoundManager.Instance.zombieDeath);                  // hardcoded this bc im lazy
+
         }
         else
         {
             animator.SetTrigger("DAMAGE");
+            // Damage Sound
+            SoundManager.Instance.zombiesChannel2.PlayOneShot(SoundManager.Instance.zombieHurt);                  // hardcoded this bc im lazy
+
         }
+
     }
 
 #if UNITY_EDITOR

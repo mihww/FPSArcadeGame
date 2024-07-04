@@ -57,6 +57,11 @@ public class InteractionManager : MonoBehaviour // Singleton
     {
         if (objectHitByRaycast.GetComponent<Weapon>() && objectHitByRaycast.GetComponent<Weapon>().isActiveWeapon == false)
         {
+            if(hoveredWeapon)
+            {
+                Unhighlight(hoveredWeapon);
+            }
+
             hoveredWeapon = objectHitByRaycast.GetComponent<Weapon>();
             Highlight(hoveredWeapon);
 
@@ -79,6 +84,11 @@ public class InteractionManager : MonoBehaviour // Singleton
     {
         if (objectHitByRaycast.GetComponent<AmmoBox>())
         {
+            if (hoveredAmmoBox) 
+            {
+                Unhighlight(hoveredAmmoBox);
+            }
+
             hoveredAmmoBox = objectHitByRaycast.GetComponent<AmmoBox>();
             Highlight(hoveredAmmoBox);
 
@@ -101,6 +111,11 @@ public class InteractionManager : MonoBehaviour // Singleton
     {
         if (objectHitByRaycast.GetComponent<Throwable>())
         {
+            if(hoveredThrowable)
+            {
+                Unhighlight(hoveredThrowable);
+            }   
+
             hoveredThrowable = objectHitByRaycast.GetComponent<Throwable>();
             Highlight(hoveredThrowable);
 
