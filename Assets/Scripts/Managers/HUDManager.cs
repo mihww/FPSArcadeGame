@@ -55,6 +55,11 @@ public class HUDManager : MonoBehaviour // Singleton
 
         UpdateWeaponUI(activeWeapon, inactiveWeapon);
 
+        if(WeaponManager.Instance != null)
+        {
+            lethalAmountUI.text = WeaponManager.Instance.lethalsCount.ToString();
+            tacticalAmountUI.text = WeaponManager.Instance.tacticalsCount.ToString();
+        }
         if (WeaponManager.Instance.lethalsCount <= 0) lethalUI.sprite = greySlot;
         if (WeaponManager.Instance.tacticalsCount <= 0) tacticalUI.sprite = greySlot;
 

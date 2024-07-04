@@ -9,6 +9,8 @@ TagManager:
   - Bottle
   - Weapon
   - Enemy
+  - Waypoints
+  - ZombieHand
   layers:
   - Default
   - TransparentFX

@@ -8,9 +8,10 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private int HP = 100;
-    private Animator animator;
-
     private NavMeshAgent navAgent;
+    private Animator animator;
+    private bool isDead = false;
+
 
     private void Start()
     {
@@ -20,9 +21,11 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damageAmount)
     {
+        if (isDead) return;
         HP -= damageAmount;
         if (HP <= 0)
         {
+            isDead = true;
             int randomValue = Random.Range(0, 2);
 
             switch (randomValue)
@@ -42,15 +45,18 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void Update()
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
     {
-        if (navAgent.velocity.magnitude > 0.1f)
-        {
-            animator.SetBool("IS_WALKING", true);
-        }
-        else
-        {
-            animator.SetBool("IS_WALKING", false);
-        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, 4f); // attacking + stop attacking distance
+
+        Gizmos.color= Color.blue;
+        Gizmos.DrawWireSphere(transform.position, 18f); // detection area radius
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, 25f); // stop chasing distance
     }
+#endif
+
 }
