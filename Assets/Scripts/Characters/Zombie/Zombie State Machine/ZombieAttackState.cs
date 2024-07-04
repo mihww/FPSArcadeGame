@@ -9,7 +9,7 @@ public class ZombieAttackState : StateMachineBehaviour
     Transform player;
     NavMeshAgent agent;
 
-    public float stopAttackingDistance = 4f;
+    public float stopAttackingDistance = 7f;
 
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

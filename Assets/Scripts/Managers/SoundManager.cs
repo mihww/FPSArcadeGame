@@ -16,6 +16,7 @@ public class SoundManager : MonoBehaviour // Singleton
     public AudioSource throwablesChannel;
     public AudioSource zombiesChannel;
     public AudioSource zombiesChannel2;
+    public AudioSource playerChannel;
 
     [Header("---------- Pistol M1911 ----------")]
     public AudioClip M1911Shot;
@@ -34,6 +35,14 @@ public class SoundManager : MonoBehaviour // Singleton
     public AudioClip zombieAttack;
     public AudioClip zombieHurt; 
     public AudioClip zombieDeath;
+
+    [Header("---------- Player ----------")]
+    public AudioClip playerHurt;
+    public AudioClip playerDeath;
+
+    [Header("---------- Music ----------")]
+    public AudioClip gameOverMusic;
+
 
     private void Awake()
     {
