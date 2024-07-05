@@ -7,10 +7,10 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private int HP = 100;
+    public int HP = 100;
     private NavMeshAgent navAgent;
     private Animator animator;
-    private bool isDead = false;
+    public bool isDead = false;
 
 
     private void Start()
@@ -40,6 +40,7 @@ public class Enemy : MonoBehaviour
             }
             // Dead Sound
             SoundManager.Instance.zombiesChannel.PlayOneShot(SoundManager.Instance.zombieDeath);                  // hardcoded this bc im lazy
+            
 
         }
         else

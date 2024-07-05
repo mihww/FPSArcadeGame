@@ -9,8 +9,10 @@ public class Zombie : MonoBehaviour
     public int damage;
 
 
-    public void Start()
+    private void Start()
     {
         zombieHand.damage = this.damage;
     }
+
+
 }
