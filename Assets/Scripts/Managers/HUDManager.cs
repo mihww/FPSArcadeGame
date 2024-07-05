@@ -91,7 +91,7 @@ public class HUDManager : MonoBehaviour // Singleton
                 Debug.Log("WEDIDIT");
                 tacticalUI.sprite = IconManager.Smoke_Grenade;
                 break;
-        }
+        }   
     }
 
     /* ------------------------------------------------------------------------------------------------------------------------------ */
