@@ -60,10 +60,10 @@ public class Enemy : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, 4f);                              // attacking + stop attacking distance
 
         Gizmos.color= Color.blue;
-        Gizmos.DrawWireSphere(transform.position, 200f);                             // detection area radius
+        Gizmos.DrawWireSphere(transform.position, 200f);                            // detection area radius
 
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, 205f);                             // stop chasing distance
+        Gizmos.DrawWireSphere(transform.position, 205f);                            // stop chasing distance
     }
 #endif
 

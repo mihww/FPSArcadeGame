@@ -135,6 +135,7 @@ public class Player : MonoBehaviour
         if (bloodyScreen.activeInHierarchy == false)
         {
             bloodyScreen.SetActive(true);
+            playerHealthUI.color = new Color(150f / 255f, 41f / 255f, 41f / 255f);
         }
 
         var image = bloodyScreen.GetComponentInChildren<Image>();
@@ -167,6 +168,8 @@ public class Player : MonoBehaviour
         if (bloodyScreen.activeInHierarchy)
         {
             bloodyScreen.SetActive(false);
+            playerHealthUI.color = Color.white;
+
         }
     }
     #endregion

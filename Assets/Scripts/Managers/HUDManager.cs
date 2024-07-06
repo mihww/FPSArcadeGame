@@ -169,6 +169,7 @@ public class HUDManager : MonoBehaviour // Singleton
         ammoTypeUI.sprite = emptySlot;
         activeWeaponUI.sprite = emptySlot;
         inactiveWeaponUI.sprite = emptySlot;
+
     }
 
     private void UpdateWeaponUI(Weapon activeWeapon, Weapon inactiveWeapon)
