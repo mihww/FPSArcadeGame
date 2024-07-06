@@ -2014,6 +2014,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HP: 100
+  isDead: 0
 --- !u!195 &7458951808070504409
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2049,7 +2050,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zombieHand: {fileID: 945408981697152456}
-  damage: 10
+  damage: 5
 --- !u!1 &7762225440396780318
 GameObject:
   m_ObjectHideFlags: 0

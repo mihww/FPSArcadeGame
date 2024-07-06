@@ -60,7 +60,6 @@ public class Player : MonoBehaviour
     }
 
     /* --------------------------------------------------------------------------------------------------- */
-
     private void PlayerDead()
     {
         SoundManager.Instance.playerChannel.PlayOneShot(SoundManager.Instance.playerDeath);
@@ -72,15 +71,35 @@ public class Player : MonoBehaviour
         GetComponent<MouseMovement>().enabled = false;
         GetComponent<PlayerMovement>().enabled = false;
 
-        // Dying anim
-        GetComponentInChildren<Weapon>().gameObject.SetActive(false);
+        if (GetComponentInChildren<Weapon>() != null)
+        {
+            GetComponentInChildren<Weapon>().gameObject.SetActive(false);
+        }
+        
+        if (GetComponentInChildren<Animator>() != null)
+        {   
+            // Dying anim
+            GetComponentInChildren<Animator>().enabled = true;
+        }
 
-        GetComponentInChildren<Animator>().enabled = true;
-        HUDManager.Instance.gameObject.SetActive(false);
+        DisableHUD();
         playerHealthUI.gameObject.SetActive(false);
 
         GetComponent<ScreenFader>().StartFade();
         StartCoroutine(ShowGameOverUI());
+    }
+    private void DisableHUD()
+    {
+        HUDManager.Instance.lethalAmountUI.gameObject.SetActive(false);
+        HUDManager.Instance.tacticalAmountUI.gameObject.SetActive(false);
+        HUDManager.Instance.ammoTypeUI.gameObject.SetActive(false);
+        HUDManager.Instance.magazineAmmoUI.gameObject.SetActive(false);
+        HUDManager.Instance.totalAmmoUI.gameObject.SetActive(false);
+        HUDManager.Instance.activeWeaponUI.gameObject.SetActive(false);
+        HUDManager.Instance.inactiveWeaponUI.gameObject.SetActive(false);
+        HUDManager.Instance.lethalUI.gameObject.SetActive(false);
+        HUDManager.Instance.tacticalUI.gameObject.SetActive(false);
+        HUDManager.Instance.crosshair.SetActive(false);
     }
 
     #region IEnumerators
@@ -100,13 +119,14 @@ public class Player : MonoBehaviour
 
     private IEnumerator ReturnToMainMenu()
     {
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(3f);
+        Cursor.lockState = CursorLockMode.None;
         SceneManager.LoadScene("MainMenu");
     }
 
     private IEnumerator ResetDamageFlag()
     {
-        yield return new WaitForSeconds(1.2f);
+        yield return new WaitForSeconds(0.3f);
         isTakingDamage = false;
     }
 

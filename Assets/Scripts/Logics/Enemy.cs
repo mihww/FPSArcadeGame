@@ -8,8 +8,8 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     public int HP = 100;
-    private NavMeshAgent navAgent;
     private Animator animator;
+    private NavMeshAgent navAgent;
     public bool isDead = false;
 
 

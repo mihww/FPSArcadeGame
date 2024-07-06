@@ -20,8 +20,8 @@ TagManager:
   - UI
   - WeaponRender
   - PlayerRender
-  - 
-  - 
+  - PostProcessing
+  - MotionBlur
   - 
   - 
   - 
