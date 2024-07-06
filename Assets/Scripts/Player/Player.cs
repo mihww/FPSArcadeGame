@@ -1,9 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -70,7 +73,10 @@ public class Player : MonoBehaviour
         GetComponent<PlayerMovement>().enabled = false;
 
         // Dying anim
+        GetComponentInChildren<Weapon>().gameObject.SetActive(false);
+
         GetComponentInChildren<Animator>().enabled = true;
+        HUDManager.Instance.gameObject.SetActive(false);
         playerHealthUI.gameObject.SetActive(false);
 
         GetComponent<ScreenFader>().StartFade();
@@ -82,9 +88,23 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         gameOverUI.SetActive(true);
+
+        int waveSurvived = GlobalReferences.Instance.waveNumber;
+        if (waveSurvived - 1 > SaveLoadManager.Instance.LoadHighScore())
+        {
+            SaveLoadManager.Instance.SaveHighScore(waveSurvived - 1);
+        }
+
+        StartCoroutine(ReturnToMainMenu());
     }
 
-    private IEnumerator ResetDamageFlag()   
+    private IEnumerator ReturnToMainMenu()
+    {
+        yield return new WaitForSeconds(5f);
+        SceneManager.LoadScene("MainMenu");
+    }
+
+    private IEnumerator ResetDamageFlag()
     {
         yield return new WaitForSeconds(1.2f);
         isTakingDamage = false;
