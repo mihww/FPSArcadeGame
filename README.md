@@ -45,5 +45,8 @@ This is an FPS arcade game developed in C# using Unity. The objective of the gam
 ![Main Menu](https://github.com/mihww/FPSArcadeGame/assets/147138758/d861cfb5-ccb1-446f-bd45-b4905d395f02)
 
 ### In-Game
-![In-Game](https://github.com/mihww/FPSArcadeGame/assets/147138758/0764f821-b8b4-4e84-9a5e-249f74d2fb39)
+![In-Game_1](https://github.com/mihww/FPSArcadeGame/assets/147138758/79f9d549-c4e8-4868-97ac-e0b718ed8db6)
+![In-Game_2](https://github.com/mihww/FPSArcadeGame/assets/147138758/17448145-c15f-4d7d-ae3a-45dd8ecc4623)
+
+
 
